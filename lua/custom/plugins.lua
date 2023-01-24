@@ -3,6 +3,8 @@ return function(use)
   use 'tpope/vim-rsi'
   use 'tpope/vim-unimpaired'
 
+  use 'sainnhe/gruvbox-material'
+
   use {
     'folke/which-key.nvim',
     config = function()

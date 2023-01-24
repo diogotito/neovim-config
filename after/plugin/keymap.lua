@@ -1,3 +1,7 @@
+local function save()
+  vim.cmd [[write]]
+end
+
 -- Saner motions.
 -- '' means {'n', 'v', 'o'}
 vim.keymap.set('', 'gh', '^')
@@ -12,9 +16,22 @@ vim.keymap.set('i', 'jj', '<Esc>')
 vim.keymap.set('i', 'kk', '<Esc>')
 vim.keymap.set('i', '<C-c>', '<Esc>')
 
+-- System clipboard
+vim.keymap.set('n', '<C-S-v>', '"+p`[v`]=')
+vim.keymap.set('i', '<C-S-v>', '<C-r>+')
+vim.keymap.set("n", "<leader>y", "\"+y")
+vim.keymap.set("v", "<leader>y", "\"+y")
+vim.keymap.set("n", "<leader>Y", "\"+Y")
+
 -- Black hole
 vim.keymap.set("x", "<leader>p", "\"_dP")
 vim.keymap.set({'n', 'v'}, "<leader>d", "\"_d")
+
+-- GUI-friendly keybindings
+vim.keymap.set('i', '<C-BS>', '<C-w>')
+vim.keymap.set('i', '<C-z>', '<C-o>u')
+vim.keymap.set('n', '<M-S-d>', '0D')
+vim.keymap.set({'', 'i'}, '<C-s>', save, { desc = "[B]uffer [S]ave" })
 
 -- Bubble lines up and down
 -- vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -28,10 +45,6 @@ vim.keymap.set('n', '<M-S-o>', 'O<Esc>j<C-e>')
 vim.keymap.set("n", "<leader>ss", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
 
 -- Buffer management
-local function save()
-  vim.cmd [[write]]
-end
-vim.keymap.set({'', 'i'}, '<C-s>', save, { desc = "[B]uffer [S]ave" })
 vim.keymap.set('n', '<leader>bs', save, { desc = "[B]uffer [S]ave" })
 
 vim.keymap.set('n', '<leader>br', function()
