@@ -1,3 +1,7 @@
+-- disable netrw at the very start for nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
@@ -170,6 +174,8 @@ require('Comment').setup()
 require('indent_blankline').setup {
   char = '┊',
   show_trailing_blankline_indent = false,
+  show_current_context = true,
+  show_current_context_start = false,
 }
 
 -- Gitsigns
