@@ -1,37 +1,21 @@
 return function(use)
-  use 'tpope/vim-eunuch'
-  use 'tpope/vim-rsi'
-  use 'tpope/vim-unimpaired'
+  -- tpope's Vim plugins
+  use 'tpope/vim-repeat'      -- Makes many actions from Vim plugins repeatable
+  use 'tpope/vim-eunuch'      -- :Rename, :Mkdir, :Move, :Copy, :Delete, :W, :Wall, :SudoWrite, etc.
+  use 'tpope/vim-rsi'         -- Emacs keybindings in Insert and Command mode!
+  use 'tpope/vim-unimpaired'  -- Lots of keybindings under [, ] and yo
 
-  use 'sainnhe/gruvbox-material'
+  ------------------
+  -- Misc plugins --
+  ------------------
 
-  use {
-    'folke/which-key.nvim',
-    config = function()
-      require("which-key").setup({})
-    end
-  }
-
-  use {
-    'nvim-tree/nvim-tree.lua',
-    requires = {
-      'nvim-tree/nvim-web-devicons', -- optional, for file icons
-    },
-    tag = 'nightly',
-    config = function()
-      require('nvim-tree').setup()  -- TODO pass a table to configure nvim-tree further
-    end
-  }
-
+  -- Cool Lua playground buffer
   use 'rafcamlet/nvim-luapad'
 
-  use {
-    'windwp/nvim-autopairs',
-    config = function()
-      require('nvim-autopairs').setup({})
-    end
-  }
+  -- Run lines/blocks of code!
+  use 'michaelb/sniprun'
 
+  -- Mini.nvim is a collection of plugins with a consistent configuration API
   use {
     'echasnovski/mini.nvim',
     branch = 'stable',
@@ -40,6 +24,11 @@ return function(use)
     end
   }
 
+  -----------------------
+  -- Text manipulation --
+  -----------------------
+
+  -- Move and duplicate with Alt+[hjkl]
   use {
     'booperlv/nvim-gomove',
     config = function()
@@ -56,6 +45,7 @@ return function(use)
     end
   }
 
+  -- Deal with ((surroundings))
   use {
     "kylechui/nvim-surround",
     tag = "*", -- Use for stability; omit to use `main` branch for the latest features
@@ -66,6 +56,35 @@ return function(use)
     end
   }
 
+  -- Provides functions to align stuff
+  use 'Vonr/align.nvim'
+
+
+  ------------------------------------------------------------------
+  -- Replicate features from other modern graphical text editors  --
+  ------------------------------------------------------------------
+
+  -- Peeks lines of the buffer in non-obtrusive way while entering :{number}
+  use 'nacro90/numb.nvim'
+
+  -- "A legend for your keymaps, commands, and autocmds"
+  use 'mrjones2014/legendary.nvim'
+
+  -- Highlight all occurrences of word under cursor
+  -- and jump to them with M-p and M-n
+  -- TODO highlight with a subtle background instead of underline
+  use 'RRethy/vim-illuminate'
+
+  -- Automatically close brackets, braces, etc. like in modern editors
+  use {
+    'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({})
+    end
+  }
+
+  -- Make <Tab> jump outside of closing brackets/braces/etc. like in modern editors
+  -- Pairs well with nvim-autopairs above
   use {
     'abecodes/tabout.nvim',
     config = function()
@@ -94,21 +113,78 @@ return function(use)
     after = {'nvim-cmp'} -- if a completion plugin is using tabs load it before
   }
 
+  ---------------
+  -- Eye candy --
+  ---------------
+
+  -- Start screen
   use {
-    'romgrk/barbar.nvim',
-    wants = 'nvim-web-devicons',
+    'goolord/alpha-nvim',
+    requires = { 'nvim-tree/nvim-web-devicons' },
     config = function ()
-      require('bufferline').setup {}
-      for i = 1, 9 do
-        vim.keymap.set(
-          'n',
-          ('<A-%d>'):format(i),
-          ('<Cmd>BufferGoto %d<CR>'):format(i),
-          { desc = ('Go to buffer %d'):format(i) }
-        )
-      end
+      require'alpha'.setup(require'alpha.themes.startify'.config)
     end
   }
 
+  -- Themes and icons
+  use 'sainnhe/gruvbox-material'
+  use 'nvim-tree/nvim-web-devicons'
+
+  -- Improve default vim.ui interfaces
+  use 'stevearc/dressing.nvim'
+
+  -- popup with possible key bindings of the command you started typing
+  use {
+    'folke/which-key.nvim',
+    config = function()
+      require("which-key").setup({})
+    end
+  }
+
+  -- Sidebar with a file tree
+  use {
+    'nvim-tree/nvim-tree.lua',
+    requires = {
+      'nvim-tree/nvim-web-devicons', -- optional, for file icons
+    },
+    tag = 'nightly',
+    config = function()
+      require('nvim-tree').setup()  -- TODO pass a table to configure nvim-tree further
+    end
+  }
+
+  -- A tab line that shows buffers and tabpages
+  -- Integrates with nvim-tree and provides functions to switch between the displayed tabs
+  use {
+    'romgrk/barbar.nvim',
+    config = function()
+      require('bufferline').setup()
+      local nvim_tree_events = require('nvim-tree.events')
+      local bufferline_api = require('bufferline.api')
+
+      local function get_tree_size()
+        return require'nvim-tree.view'.View.width
+      end
+
+      nvim_tree_events.subscribe('TreeOpen', function()
+        bufferline_api.set_offset(get_tree_size())
+      end)
+
+      nvim_tree_events.subscribe('Resize', function()
+        bufferline_api.set_offset(get_tree_size())
+      end)
+
+      nvim_tree_events.subscribe('TreeClose', function()
+        bufferline_api.set_offset(0)
+      end)
+
+      for i = 1, 9 do
+        local function ii(s) return s:format(i) end  -- Interpolate with i
+        vim.keymap.set('n', ii'<M-%d>', ii'<Cmd>BufferGoto %d<CR>', { desc = ii'Go to buffer %d' })
+      end
+    end,
+  }
 
 end
+
+-- vim: foldmethod=marker

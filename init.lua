@@ -93,7 +93,7 @@ local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
 vim.api.nvim_create_autocmd('BufWritePost', {
   command = 'source <afile> | silent! LspStop | silent! LspStart | PackerCompile',
   group = packer_group,
-  pattern = vim.fn.expand '$MYVIMRC',
+  pattern = vim.fn.globpath(vim.fn.stdpath('config'), '*.lua'),
 })
 
 -- [[ Setting options ]]
@@ -171,12 +171,7 @@ require('Comment').setup()
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
-require('indent_blankline').setup {
-  char = '┊',
-  show_trailing_blankline_indent = false,
-  show_current_context = true,
-  show_current_context_start = false,
-}
+require('ibl').setup {}
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
@@ -218,6 +213,7 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>fs', require('telescope.builtin').find_files, { desc = '[F]ile [S]earch' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
